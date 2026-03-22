@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  UploadCloud, Edit2, Save, MapPin, Loader2, Sparkles,
-  User as UserIcon, Briefcase, GraduationCap, Phone, Mail,
+  UploadCloud, Edit2, Save, Loader2, Sparkles,
+  User as UserIcon, Briefcase, GraduationCap,
   FileText, CheckCircle, X, Plus
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
