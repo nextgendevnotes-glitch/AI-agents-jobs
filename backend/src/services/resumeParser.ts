@@ -1,26 +1,22 @@
-import { PDFParse } from 'pdf-parse';
+// @ts-ignore
 import mammoth from 'mammoth';
 import Tesseract from 'tesseract.js';
+// @ts-ignore
+const pdf = require('pdf-parse');
 
 export class ResumeParser {
   static async extractText(buffer: Buffer, mimetype: string): Promise<string> {
     try {
       if (mimetype === 'application/pdf') {
-        const parser = new PDFParse({ data: buffer });
-        const data = await parser.getText();
+        const data = await pdf(buffer);
         let extractedText = data.text || '';
         
-        // OCR Fallback for Image-based (scanned) PDFs heavily missing a text-layer
-        if (extractedText.trim().length < 20) {
-           const shots = await parser.getScreenshot({ scale: 1.5 });
-           if (shots && shots.pages && shots.pages.length > 0) {
-             const ocrPromises = shots.pages.map(p => Tesseract.recognize(p.data, 'eng').then(res => res.data.text));
-             const textArray = await Promise.all(ocrPromises);
-             extractedText = textArray.join('\n');
-           }
+        // OCR Fallback for Image-based (scanned) PDFs if initial text is empty
+        if (extractedText.trim().length < 50) {
+          const { data: { text } } = await Tesseract.recognize(buffer, 'eng');
+          extractedText = text;
         }
         
-        await parser.destroy();
         return extractedText;
       } else if (
         mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
@@ -30,6 +26,7 @@ export class ResumeParser {
         return data.value;
       } else if (mimetype.startsWith('image/')) {
         const { data: { text } } = await Tesseract.recognize(buffer, 'eng');
+        if (!text) throw new Error('OCR failed to extract text from image');
         return text;
       } else {
          throw new Error('Unsupported file type.');
