@@ -11,10 +11,9 @@ export class ResumeParser {
         const data = await pdf(buffer);
         let extractedText = data.text || '';
         
-        // OCR Fallback for Image-based (scanned) PDFs if initial text is empty
+        // Tesseract.js cannot directly read PDF files. If the text is empty, it's likely a scanned PDF.
         if (extractedText.trim().length < 50) {
-          const { data: { text } } = await Tesseract.recognize(buffer, 'eng');
-          extractedText = text;
+          throw new Error('This PDF appears to be a scanned image with no readable text. Please upload a standard PDF, a Word document, or an Image (PNG/JPG).');
         }
         
         return extractedText;

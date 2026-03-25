@@ -1,7 +1,11 @@
 import Groq from 'groq-sdk';
 import { ENV } from '../config/env';
 
-const groq = new Groq({ apiKey: ENV.GROQ_API_KEY });
+const groq = new Groq({ 
+  apiKey: ENV.GROQ_API_KEY,
+  maxRetries: 5,
+  timeout: 60 * 1000, 
+});
 export const aiClient = groq;
 const AI_MODEL = 'llama-3.3-70b-versatile';
 

@@ -1,9 +1,9 @@
 import { Queue, QueueOptions, Worker, Job } from 'bullmq';
 import { ENV } from '../config/env';
 
-const connection = {
-  url: ENV.REDIS_URL,
-};
+export const connection = ENV.REDIS_URL?.startsWith('rediss://')
+  ? { url: ENV.REDIS_URL, tls: {} }
+  : { url: ENV.REDIS_URL };
 
 const defaultQueueOptions: QueueOptions = {
   connection,

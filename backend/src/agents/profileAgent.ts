@@ -2,7 +2,7 @@ import { Worker, Job } from 'bullmq';
 import { ENV } from '../config/env';
 import { supabase } from '../db/supabaseClient';
 import { AIService } from '../services/aiService';
-import { jobMatchQueue } from '../queues/redisQueue';
+import { jobMatchQueue, connection } from '../queues/redisQueue';
 
 export const profileWorker = new Worker(
   'profile_analyzer_queue',
@@ -61,8 +61,8 @@ export const profileWorker = new Worker(
     }
   },
   {
-    connection: { url: ENV.REDIS_URL },
-    concurrency: 5,
+    connection,
+    concurrency: 1,
   }
 );
 

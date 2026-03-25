@@ -2,7 +2,7 @@ import { Worker, Job } from 'bullmq';
 import { ENV } from '../config/env';
 import { JobScraper } from '../services/jobScraper';
 import { supabase } from '../db/supabaseClient';
-import { jobMatchQueue } from '../queues/redisQueue';
+import { jobMatchQueue, connection } from '../queues/redisQueue';
 
 export const jobFinderWorker = new Worker(
   'job_finder_queue',
@@ -57,6 +57,6 @@ export const jobFinderWorker = new Worker(
     }
   },
   {
-    connection: { url: ENV.REDIS_URL },
+    connection,
   }
 );

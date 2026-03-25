@@ -3,7 +3,7 @@ import { ENV } from '../config/env';
 import { supabase } from '../db/supabaseClient';
 import { EmailService } from '../services/emailService';
 import { FraudDetectionService } from '../services/fraudDetectionService';
-
+import { connection } from '../queues/redisQueue';
 export const autoApplyWorker = new Worker(
   'auto_apply_queue',
   async (job: Job) => {
@@ -99,8 +99,8 @@ export const autoApplyWorker = new Worker(
     }
   },
   {
-    connection: { url: ENV.REDIS_URL },
-    concurrency: 5,
+    connection,
+    concurrency: 1,
     limiter: {
       max: 10,
       duration: 1000,
